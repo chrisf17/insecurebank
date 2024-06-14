@@ -60,3 +60,5 @@ Pwd: amy
 User: admin
 Pwd: P4$$w0rd
 ```
+
+Latest version at https://github.com/chrisf17/insecurebank.git
