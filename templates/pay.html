@@ -1,0 +1,75 @@
+{%extends "base.html"%}
+{% block title %}Pay Someone{% endblock %}
+{% block content %}
+<h3 class="text-left">Pay Someone</h3>
+<form method="POST" action="/pay">
+    <div class="form-group">
+        <label for="from_account">From Account</label>
+        <select class="form-control" id="from_account" name="from_account" required>
+            {% for account in accounts %}
+                <option value="{{ account[0] }}">{{ account[1] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="recipient_email">Recipient email</label>
+        <div class="d-flex align-items-center">
+            <input type="text" class="form-control mr-2 flex-grow-1" id="recipient_email" placeholder="Enter an ACME Bank recipient email and press Find" name="recipient_email" required>
+            <button id="find_user" class="btn btn-primary">Find</button>
+            
+        </div>
+        <label id="errorlabel" class="d-none" style="color:red">Not Found</label>
+
+    </div>
+    
+    
+    <div class="form-group">
+        <label for="recipient_name">Recipient Name</label>
+        <label type="text" class="form-control bg-light text-info" id="recipient_name">
+        <input type="hidden" id="recipient_id" name="recipient_id">
+    </div>
+    <div class="form-group">
+        <label for="amount">Reference</label>
+        <input placeholder="Enter a reference that will be meaningful to the recipient" class="form-control" id="reference" name="reference" required>
+    </div>
+    <div class="form-group">
+        <label for="amount">Amount</label>
+        <input type="number" placeholder="Enter amount to pay to recipient" class="form-control" id="amount" name="amount" required>
+    </div>
+    <button type="submit" id="pay-button" class="btn btn-success btn-block" disabled>Pay</button>
+
+
+</form>
+{% endblock %}
+
+{%block scripts%}
+<script>
+    $(document).ready(function () {
+        $("#find_user").click(function () {
+            var searchQuery = $("#recipient_email").val();
+            console.log(searchQuery);
+            $.ajax({
+                type: "GET",
+                url: "/api/search_users",
+                data: { search_query: searchQuery },
+                success: function (data) {
+                    console.log(data);
+                    if(data.message){
+                        $('#errorlabel').toggleClass('d-none', false);
+                        return;
+                    }
+                    $('#errorlabel').toggleClass('d-none', true);
+                    var resultsList = $("#recipient_name");
+                    resultsList.empty();
+                    resultsList.text(data[0][3] + ' ' + data[0][4]);
+                    $("#pay-button").prop("disabled", false);
+                },
+                dataType: "json" // Specify the expected data type
+            });
+        });
+
+        
+    });
+</script>
+{%endblock%}

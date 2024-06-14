@@ -1,0 +1,55 @@
+{%extends "base.html"%}
+{% block title %}Transfer Money{% endblock %}
+{% block content %}
+<h3 class="text-left">Transfer Money</h3>
+<form method="POST" action="/transfer">
+
+    <div class="form-group">
+        <label for="from_account">From Account</label>
+        <select class="form-control" id="from_account" name="from_account" required>
+            {% for account_type in account_types %}
+                <option value="{{ account_type[0] }}">{{ account_type[1] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="to_account">To Account</label>
+        <select class="form-control" id="to_account" name="to_account" required>
+            {% for account_type in account_types %}
+                <option value="{{ account_type[0] }}">{{ account_type[1] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+
+    <div class="form-group">
+        <label for="amount">Amount</label>
+        <input type="number" class="form-control" id="amount" name="amount" required>
+    </div>
+    <button type="submit" id="transfer-button" class="btn btn-primary btn-block" disabled>Transfer</button>
+</form>
+{% endblock %}
+
+{%block scripts%}
+<script>
+    $(document).ready(function () {
+        // Function to check if the "Transfer" button should be enabled
+        function checkTransferButton() {
+            var fromAccount = $("#from_account").val();
+            var toAccount = $("#to_account").val();
+
+            if (fromAccount !== toAccount) {
+                $("#transfer-button").prop("disabled", false);
+            } else {
+                $("#transfer-button").prop("disabled", true);
+            }
+        }
+
+        // Bind the check function to change events of the dropdowns
+        $("#from_account, #to_account").change(checkTransferButton);
+
+        // Initial check when the page loads
+        checkTransferButton();
+    });
+</script>
+{% endblock %}
